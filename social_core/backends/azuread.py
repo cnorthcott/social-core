@@ -143,3 +143,12 @@ class AzureADOpenIdConnect(OpenIdConnectAuth):
             return settings.SOCIAL_AUTH_AZUREAD_OPENIDCONNECT_RESOURCE
         else:
             return self._orig_setting(name, default)
+
+    def get_user_details(self, response):
+        return {
+            'username': response.get('unique_name'),
+            'email': response.get('unique_name'),
+            'fullname': response.get('name'),
+            'first_name': response.get('given_name'),
+            'last_name': response.get('family_name'),
+        }
