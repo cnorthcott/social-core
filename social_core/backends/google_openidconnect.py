@@ -4,7 +4,7 @@ Google OpenIdConnect:
 """
 from .open_id_connect import OpenIdConnectAuth
 from .google import GoogleOAuth2
-
+from django.conf import settings
 
 class GoogleOpenIdConnect(OpenIdConnectAuth):
     name = 'google-openidconnect'
@@ -24,13 +24,15 @@ class GoogleOpenIdConnect(OpenIdConnectAuth):
     def __init__(self, *args, **kwargs):
         super(GoogleOpenIdConnect, self).__init__(*args, **kwargs)
 
+        # TODO: When time allows, find out what the setting actually should be called so
+        # We don't need this horrible hack.
         self._orig_setting = self.setting
         self.setting = self.my_setting_hack
 
     def my_setting_hack(self, name, default=None):
         if name == 'SECRET':
-            return 'TEST1'
+            return settings.SOCIAL_AUTH_GOOGLE_OPENIDCONNECT_SECRET
         elif name == 'KEY':
-            return 'TEST2'
+            return settings.SOCIAL_AUTH_GOOGLE_OPENIDCONNECT_KEY
         else:
             return self._orig_setting(name, default)
