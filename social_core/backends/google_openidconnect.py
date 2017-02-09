@@ -30,7 +30,7 @@ class GoogleOpenIdConnect(OpenIdConnectAuth):
         self.setting = self.my_setting_hack
 
     def my_setting_hack(self, name, default=None):
-        if name == 'SECRET':
+        if name == 'SECRET' or name == 'ID_TOKEN_DECRYPTION_KEY':
             return settings.SOCIAL_AUTH_GOOGLE_OPENIDCONNECT_SECRET
         elif name == 'KEY':
             return settings.SOCIAL_AUTH_GOOGLE_OPENIDCONNECT_KEY
