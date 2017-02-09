@@ -122,7 +122,6 @@ class AzureADOAuth2(BaseOAuth2):
 
 class AzureADOpenIdConnect(OpenIdConnectAuth):
     name = 'azuread-openidconnect'
-    OIDC_ENDPOINT = 'https://sts.windows.net/' + self.setting('KEY')
     # ID_TOKEN_ISSUER = XXX
 
     def __init__(self, *args, **kwargs):
@@ -132,6 +131,8 @@ class AzureADOpenIdConnect(OpenIdConnectAuth):
         # We don't need this horrible hack.
         self._orig_setting = self.setting
         self.setting = self.my_setting_hack
+
+        self.OIDC_ENDPOINT = 'https://sts.windows.net/' + self.setting('KEY')
 
     def my_setting_hack(self, name, default=None):
         if name == 'SECRET' or name == 'ID_TOKEN_DECRYPTION_KEY':
