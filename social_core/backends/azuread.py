@@ -33,8 +33,9 @@ import time
 from jwt import DecodeError, ExpiredSignature, decode as jwt_decode
 
 from ..exceptions import AuthTokenError
+from .open_id_connect import OpenIdConnectAuth
 from .oauth import BaseOAuth2
-
+from django.conf import settings
 
 class AzureADOAuth2(BaseOAuth2):
     name = 'azuread-oauth2'
@@ -118,3 +119,24 @@ class AzureADOAuth2(BaseOAuth2):
             new_token_response = self.refresh_token(token=access_token)
             access_token = new_token_response['access_token']
         return access_token
+
+class AzureADOpenIdConnect(OpenIdConnectAuth):
+    name = 'azuread-openidconnect'
+    OIDC_ENDPOINT = 'https://sts.windows.net/' + self.setting('KEY')
+    # ID_TOKEN_ISSUER = XXX
+
+    def __init__(self, *args, **kwargs):
+        super(AzureADOpenIdConnect, self).__init__(*args, **kwargs)
+
+        # TODO: When time allows, find out what the setting actually should be called so
+        # We don't need this horrible hack.
+        self._orig_setting = self.setting
+        self.setting = self.my_setting_hack
+
+    def my_setting_hack(self, name, default=None):
+        if name == 'SECRET' or name == 'ID_TOKEN_DECRYPTION_KEY':
+            return settings.SOCIAL_AUTH_AZUREAD_OPENIDCONNECT_SECRET
+        elif name == 'KEY':
+            return settings.SOCIAL_AUTH_AZUREAD_OPENIDCONNECT_KEY
+        else:
+            return self._orig_setting(name, default)
