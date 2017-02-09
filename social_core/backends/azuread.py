@@ -132,12 +132,14 @@ class AzureADOpenIdConnect(OpenIdConnectAuth):
         self._orig_setting = self.setting
         self.setting = self.my_setting_hack
 
-        self.OIDC_ENDPOINT = 'https://sts.windows.net/' + self.setting('KEY')
+        self.OIDC_ENDPOINT = 'https://sts.windows.net/' + self.setting('RESOURCE')
 
     def my_setting_hack(self, name, default=None):
         if name == 'SECRET' or name == 'ID_TOKEN_DECRYPTION_KEY':
             return settings.SOCIAL_AUTH_AZUREAD_OPENIDCONNECT_SECRET
         elif name == 'KEY':
             return settings.SOCIAL_AUTH_AZUREAD_OPENIDCONNECT_KEY
+        elif name == 'RESOURCE':
+            return settings.SOCIAL_AUTH_AZUREAD_OPENIDCONNECT_RESOURCE
         else:
             return self._orig_setting(name, default)
