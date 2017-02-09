@@ -6,7 +6,7 @@ from .open_id_connect import OpenIdConnectAuth
 from .google import GoogleOAuth2
 
 
-class GoogleOpenIdConnect(GoogleOAuth2, OpenIdConnectAuth):
+class GoogleOpenIdConnect(OpenIdConnectAuth):
     name = 'google-openidconnect'
     OIDC_ENDPOINT = 'https://accounts.google.com'
     # differs from value in discovery document
@@ -16,6 +16,7 @@ class GoogleOpenIdConnect(GoogleOAuth2, OpenIdConnectAuth):
     def user_data(self, access_token, *args, **kwargs):
         """Return user data from Google API"""
         return self.get_json(
-            'https://www.googleapis.com/plus/v1/people/me/openIdConnect',
+            'https://www.googleapis.com/oauth2/v3/userinfo',
+            #'https://www.googleapis.com/plus/v1/people/me/openIdConnect',
             params={'access_token': access_token, 'alt': 'json'}
         )
