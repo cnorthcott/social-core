@@ -20,3 +20,17 @@ class GoogleOpenIdConnect(OpenIdConnectAuth):
     #         #'https://www.googleapis.com/plus/v1/people/me/openIdConnect',
     #         params={'access_token': access_token, 'alt': 'json'}
     #     )
+
+    def __init__(self, *args, **kwargs):
+        super(GoogleOpenIdConnect, self).__init__(*args, **kwargs)
+
+        self._orig_setting = self.setting
+        self.setting = self.my_setting_hack
+
+    def my_setting_hack(self, name, default=None):
+        if name == 'SECRET':
+            return 'TEST1'
+        elif name == 'KEY':
+            return 'TEST2'
+        else:
+            return self._orig_setting(name, default)
